@@ -1,0 +1,62 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs: 
+  build:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { system: 24.04, platform: QemuSbsaPkg }
+          - { system: devel, platform: QemuSbsaPkg }
+
+    steps:
+    - uses: actions/setup-python@main
+      with:
+          python-version: 3.12
+
+    - name: 'Update system to devel'
+      if: ${{ matrix.system == 'devel' }}
+      run: |
+        sudo sed -i 's/noble/devel/g' /etc/apt/sources.list.d/ubuntu.sources
+
+    - name: 'Install software packages'
+      run: |
+        sudo apt update
+        sudo apt full-upgrade
+        sudo apt install mono-complete gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu
+
+    - uses: actions/checkout@main
+      with: 
+          submodules: 'true'
+
+    - uses: moonrepo/setup-rust@v1
+      with:
+        profile: default
+        components: rust-src
+        bins: cargo-make@0.37.9, cargo-tarpaulin@0.31.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 'Build ${{ matrix.arch }}'
+      env:
+        GCC_ARM_PREFIX: '/usr/bin/arm-linux-gnueabihf-'
+        GCC5_AARCH64_PREFIX: '/usr/bin/aarch64-linux-gnu-'
+      run: |
+        pip install --upgrade -r pip-requirements.txt
+        stuart_setup -c Platforms/${{ matrix.platform }}/PlatformBuild.py TOOL_CHAIN_TAG=GCC5
+        stuart_update -c Platforms/${{ matrix.platform }}/PlatformBuild.py TOOL_CHAIN_TAG=GCC5
+        stuart_build -c Platforms/${{ matrix.platform }}/PlatformBuild.py TOOL_CHAIN_TAG=GCC5
+
+    - name: 'Upload artifact'
+      if: ${{ always() }}
+      uses: actions/upload-artifact@main
+      with:
+        name: ${{ format('{0} {1} (Ubuntu {2} Build)', matrix.platform, matrix.target, matrix.system) }}
+        path:  ${{ github.workspace }}/Build
+        compression-level: 9
