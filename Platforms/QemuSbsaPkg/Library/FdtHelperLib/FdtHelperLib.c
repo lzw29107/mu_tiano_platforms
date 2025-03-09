@@ -66,6 +66,7 @@ FdtHelperCountCpus (
   INT32   Prev;
   INT32   CpuNode;
   UINT32  CpuCount;
+  CONST CHAR8 *DeviceType;
 
   DeviceTreeBase = (VOID *)(UINTN)PcdGet64 (PcdDeviceTreeInitialBaseAddress);
   ASSERT (DeviceTreeBase != NULL);
@@ -87,7 +88,12 @@ FdtHelperCountCpus (
   Prev               = fdt_first_subnode (DeviceTreeBase, CpuNode);
   mFdtFirstCpuOffset = Prev;
   while (1) {
-    CpuCount++;
+    // Check the device_type property
+    DeviceType = fdt_getprop(DeviceTreeBase, Prev, "device_type", NULL);
+    if (DeviceType && AsciiStrCmp(DeviceType, "cpu") == 0) {
+        CpuCount++;
+    }
+
     Node = fdt_next_subnode (DeviceTreeBase, Prev);
     if (Node < 0) {
       break;
