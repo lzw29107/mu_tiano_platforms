@@ -24,6 +24,8 @@ jobs:
       if: ${{ matrix.system == 'devel' }}
       run: |
         sudo sed -i 's/noble/devel/g' /etc/apt/sources.list.d/ubuntu.sources
+        sudo apt update
+        sudo apt-mark hold cloud-init-base
 
     - name: 'Install software packages'
       run: |
