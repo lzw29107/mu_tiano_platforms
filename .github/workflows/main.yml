@@ -52,9 +52,9 @@ jobs:
         GCC5_AARCH64_PREFIX: '/usr/bin/aarch64-linux-gnu-'
       run: |
         pip install --upgrade -r pip-requirements.txt
-        stuart_setup -c Platforms/${{ matrix.platform }}/PlatformBuild.py -t ${{ matrix.target}} TOOL_CHAIN_TAG=GCC5
-        stuart_update -c Platforms/${{ matrix.platform }}/PlatformBuild.py -t ${{ matrix.target}} TOOL_CHAIN_TAG=GCC5
-        stuart_build -c Platforms/${{ matrix.platform }}/PlatformBuild.py -t ${{ matrix.target}} TOOL_CHAIN_TAG=GCC5
+        stuart_setup -c Platforms/${{ matrix.platform }}/PlatformBuild.py -t ${{ matrix.target }} TOOL_CHAIN_TAG=GCC5
+        stuart_update -c Platforms/${{ matrix.platform }}/PlatformBuild.py -t ${{ matrix.target }} TOOL_CHAIN_TAG=GCC5
+        stuart_build -c Platforms/${{ matrix.platform }}/PlatformBuild.py Target=${{ matrix.target }} TOOL_CHAIN_TAG=GCC5
 
     - name: 'Upload artifact'
       if: ${{ always() }}
