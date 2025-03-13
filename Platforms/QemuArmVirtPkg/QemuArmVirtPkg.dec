@@ -1,0 +1,98 @@
+#/** @file
+#
+#  Copyright (c) 2014, Linaro Limited. All rights reserved.
+#  Copyright (c) 2020, ARM Limited. All rights reserved.
+#  Copyright (c) Microsoft Corporation.
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+#**/
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = QemuArmVirtPkg
+  PACKAGE_GUID                   = 9EBD48E1-2370-4B1C-AFF7-811DD22E8BCB
+  PACKAGE_VERSION                = 0.1
+
+################################################################################
+#
+# Include Section - list of Include Paths that are provided by this package.
+#                   Comments are used for Keywords and Module Types.
+#
+# Supported Module Types:
+#  BASE SEC PEI_CORE PEIM DXE_CORE DXE_DRIVER DXE_RUNTIME_DRIVER DXE_SMM_DRIVER DXE_SAL_DRIVER UEFI_DRIVER UEFI_APPLICATION
+#
+################################################################################
+[Includes]
+  Include
+
+[LibraryClasses]
+  ##  @libraryclass  Flat device tree support library on the CPU ID related operations
+  FdtHelperLib|Include/Library/FdtHelperLib.h
+  VirtNorFlashPlatformLib|Include/Library/VirtNorFlashPlatformLib.h
+
+[Guids]
+  gQemuArmVirtPkgTokenSpaceGuid                             = { 0x549288f7, 0x4281, 0x4f08, { 0x8f, 0x9e, 0x89, 0xe8, 0xd2, 0xf1, 0x8f, 0x2b } }
+  gArmVirtPolicyDataGFXGuid                                 = { 0x36d5e70d, 0x21ab, 0x47e2, { 0x8f, 0x31, 0x5d, 0x48, 0xf8, 0x8b, 0x2c, 0x56 } }
+  gQemuArmVirtPkgSystemMemorySizeGuid                       = { 0x295beeb6, 0xb3eb, 0x46d4, { 0xbc, 0x99, 0xd7, 0x66, 0x27, 0x18, 0x57, 0x76 } }
+
+[PcdsFixedAtBuild]
+  ##
+  # This is the physical address of the flash allocated for NV storage, including
+  # fault tolerance working and spare copies.
+  #
+  gQemuArmVirtPkgTokenSpaceGuid.PcdFlashNvStorageBase|0x0|UINT64|0x00000001
+  gQemuArmVirtPkgTokenSpaceGuid.PcdFlashNvStorageSize|0x0|UINT64|0x00000002
+
+  # Non discoverable devices Pcds
+  gQemuArmVirtPkgTokenSpaceGuid.PcdPlatformAhciBase|0|UINT64|0x00000003
+  gQemuArmVirtPkgTokenSpaceGuid.PcdPlatformAhciSize|0x10000|UINT32|0x00000004
+  gQemuArmVirtPkgTokenSpaceGuid.PcdPlatformEhciBase|0|UINT64|0x00000005
+  gQemuArmVirtPkgTokenSpaceGuid.PcdPlatformEhciSize|0x10000|UINT32|0x00000006
+
+  # PCDs complementing PCIe layout pulled into ACPI tables
+  # Limit = Base + Size - 1
+  gQemuArmVirtPkgTokenSpaceGuid.PcdPciIoLimit|0x0000ffff|UINT32|0x00000007
+  gQemuArmVirtPkgTokenSpaceGuid.PcdPciMmio32Limit|0xEFFFFFFF|UINT32|0x00000008
+  gQemuArmVirtPkgTokenSpaceGuid.PcdPciMmio64Limit|0xFFFFFFFFFF|UINT64|0x00000009
+
+  # PCDs complementing gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress
+  # BarLimit = BaseAddress + BarSize - 1
+  gQemuArmVirtPkgTokenSpaceGuid.PcdPciExpressBarSize|0x10000000|UINT64|0x0000000A
+  gQemuArmVirtPkgTokenSpaceGuid.PcdPciExpressBarLimit|0xFFFFFFFF|UINT64|0x0000000B
+
+  # Device Tree PCDs
+  gQemuArmVirtPkgTokenSpaceGuid.PcdDeviceTreeInitialBaseAddress|0x10000000000|UINT64|0x0000000C
+  # Padding in bytes to add to the device tree allocation, so that the DTB can
+  # be modified in place (default: 256 bytes)
+  #
+  gQemuArmVirtPkgTokenSpaceGuid.PcdDeviceTreeAllocationPadding|256|UINT32|0x0000000D
+
+[PcdsDynamic.common]
+  gQemuArmVirtPkgTokenSpaceGuid.PcdSystemManufacturer|L""|VOID*|0x00000110
+  gQemuArmVirtPkgTokenSpaceGuid.PcdSystemSerialNumber|L""|VOID*|0x00000111
+  gQemuArmVirtPkgTokenSpaceGuid.PcdSystemSKU|L""|VOID*|0x00000112
+  gQemuArmVirtPkgTokenSpaceGuid.PcdSystemFamily|L""|VOID*|0x00000113
+
+  gQemuArmVirtPkgTokenSpaceGuid.PcdBaseBoardAssetTag|L""|VOID*|0x00000114
+  gQemuArmVirtPkgTokenSpaceGuid.PcdBaseBoardSerialNumber|L""|VOID*|0x00000115
+  gQemuArmVirtPkgTokenSpaceGuid.PcdBaseBoardManufacturer|L""|VOID*|0x00000116
+  gQemuArmVirtPkgTokenSpaceGuid.PcdBaseBoardSKU|L""|VOID*|0x00000117
+  gQemuArmVirtPkgTokenSpaceGuid.PcdBaseBoardLocation|L""|VOID*|0x00000118
+
+  gQemuArmVirtPkgTokenSpaceGuid.PcdChassisSerialNumber|L""|VOID*|0x00000119
+  gQemuArmVirtPkgTokenSpaceGuid.PcdChassisVersion|L""|VOID*|0x0000011A
+  gQemuArmVirtPkgTokenSpaceGuid.PcdChassisManufacturer|L""|VOID*|0x0000011B
+  gQemuArmVirtPkgTokenSpaceGuid.PcdChassisAssetTag|L""|VOID*|0x0000011C
+  gQemuArmVirtPkgTokenSpaceGuid.PcdChassisSKU|L""|VOID*|0x0000011D
+
+[PcdsFixedAtBuild, PcdsDynamic, PcdsDynamicEx]
+  gQemuArmVirtPkgTokenSpaceGuid.PcdOvmfHostBridgePciDevId|0|UINT16|0x1b
+
+[PcdsDynamic, PcdsDynamicEx]
+  ## This PCD tracks where PcdVideo{Horizontal,Vertical}Resolution
+  #  values are coming from.
+  #    0 - unset (defaults from platform dsc)
+  #    1 - set from PlatformConfig
+  #    2 - set by GOP Driver.
+  gQemuArmVirtPkgTokenSpaceGuid.PcdVideoResolutionSource|0|UINT8|0x64

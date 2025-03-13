@@ -1,0 +1,18 @@
+## @file
+# Download the secureboot binary blobs for the default Db, 3PDb, Dbx, KEK, and Pk
+#
+# Copyright (c) Microsoft Corporation
+# SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+{
+  "scope": "qemuarmvirt",
+  "type": "web",
+  "name": "secureboot_binaries",
+  "source": "https://github.com/microsoft/secureboot_objects/releases/download/v1.3.0/edk2-arm-secureboot-binaries.tar.gz",
+  "version": "v1.3.0",
+  "sha256": "a74d57c64e249a4b994a98789d9e4aa94edae45bfa162dee9780b644a9cea03f",
+  "internal_path": "/",
+  "compression_type": "tar",
+  "flags": ["set_build_var"],
+  "var_name": "SECUREBOOT_BINARIES"
+}
